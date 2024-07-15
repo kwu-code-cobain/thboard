@@ -56,7 +56,7 @@ public class BoardController {
             boardService.write(boardTemp); // 수정된 게시물 저장
             return ResponseEntity.ok("Updated"); // 성공 메시지 반환
         } else {
-            return ResponseEntity.notFound().build(); // 404 Not Found 반환
+            return ResponseEntity.notFound().build(); // 404 Not Found 반환 /dfdfdf
         }
     }
 }
