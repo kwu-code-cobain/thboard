@@ -11,8 +11,11 @@ import java.util.List;
 @Service
 public class BoardService {
 
-    @Autowired
-    private BoardRepository boardRepository;
+    private final BoardRepository boardRepository;
+
+    public BoardService(BoardRepository boardRepository) {
+        this.boardRepository = boardRepository;   // @autowired 안쓰고 의존성 주입하는 방법 (생성자 주입 )
+    }
 
     /**
      글 작성 처리

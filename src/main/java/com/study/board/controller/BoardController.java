@@ -14,11 +14,12 @@ import java.util.stream.Collectors;
 @RequestMapping("/boards")
 public class BoardController {
 
-    @Autowired
-    private BoardService boardService; // BoardService를 자동으로 주입받음
-    /*
-     모든 게시물 가져오기
-     */
+    private final BoardService boardService;
+
+    public BoardController(BoardService boardService) {
+        this.boardService = boardService;   // @autowired 안쓰고 의존성 주입하는 방법 (생성자 주입 )
+    }
+
 
     @GetMapping("/list")
     public ResponseEntity<List<BoardDto>> boardList() {
