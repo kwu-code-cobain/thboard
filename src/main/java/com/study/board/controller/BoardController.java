@@ -105,31 +105,22 @@ public class BoardController {
      */
     @PutMapping("/update")
     @ResponseBody
-    public ResponseEntity<String> boardUpdate(@RequestParam("id") Integer id, BoardResponseDto boardResponseDto) {
+    public ResponseEntity<String> boardUpdate(@RequestParam("id") Integer id, BoardRequestDto boardRequestDto) {
         Board boardTemp = boardService.boardViewById(id); // 기존 게시물 조회 - > boardTemp 할당
         if (boardTemp == null) {       // 수정 완료 ->   boardTemp == null 이면 오류 반환 , else 안돌리게끔
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("게시판을 찾을 수 없습니다."); //
         }
-        boardService.updateBoardDetails(boardTemp, boardResponseDto); //updateBoardDetails 를 선언 하여 Service 에 옮김.
+        boardService.updateBoardDetails(boardTemp, boardRequestDto); //updateBoardDetails 를 선언 하여 Service 에 옮김.
         return ResponseEntity.ok("Updated"); // 성공 메시지 반환
     }
 
     private BoardResponseDto convertToDto(Board board) {
         // 엔티티를 DTO로 변환
         BoardResponseDto boardResponseDto = new BoardResponseDto();
-        boardResponseDto.setId(board.getId());
+        boardResponseDto.setWriter(board.getWriter());
         boardResponseDto.setTitle(board.getTitle());
         boardResponseDto.setContent(board.getContent());
         return boardResponseDto;
-    }
-
-    private Board convertToEntity(BoardResponseDto boardResponseDto) {
-        // DTO를 엔티티로 변환
-        Board board = new Board();
-        board.setId(boardResponseDto.getId());
-        board.setTitle(boardResponseDto.getTitle());
-        board.setContent(boardResponseDto.getContent());
-        return board;
     }
 
     private Board convertToEntity(BoardRequestDto boardRequestDto) {

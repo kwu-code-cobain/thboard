@@ -13,7 +13,6 @@ public class BoardResponseDto {
     private String title;
     private String content;
     private String writer;
-    private LocalDateTime writeTime;
 
 
     //dto request 하나 만들기.

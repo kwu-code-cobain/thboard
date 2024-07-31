@@ -20,10 +20,6 @@ public class Board {
 
     private String writer;
 
-    @CreatedDate  // 엔티티 생성될때의 시간을 자동으로 기록
-    @Column  // 이 필드가 데이터베이스의 not null 컬럼임을 나타냄
-    @Temporal(TemporalType.TIMESTAMP) // 이 필드가 타임스태프임을 나타냄
-    private LocalDateTime writeTime;
 
 
 }

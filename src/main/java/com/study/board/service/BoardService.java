@@ -1,5 +1,6 @@
 package com.study.board.service;
 
+import com.study.board.dto.BoardRequestDto;
 import com.study.board.dto.BoardResponseDto;
 import com.study.board.entity.Board;
 import com.study.board.repository.BoardRepository;
@@ -57,9 +58,10 @@ public class BoardService {
         boardRepository.deleteById(id); // ID로 게시물 삭제
     }
 
-    public void updateBoardDetails(Board boardTemp, BoardResponseDto boardResponseDto) {
-        boardTemp.setTitle(boardResponseDto.getTitle()); // 제목 수정
-        boardTemp.setContent(boardResponseDto.getContent()); // 내용 수정
+    public void updateBoardDetails(Board boardTemp, BoardRequestDto boardRequestDto) {
+        boardTemp.setTitle(boardRequestDto.getTitle()); // 제목 수정
+        boardTemp.setContent(boardRequestDto.getContent());
+        boardTemp.setWriter(boardRequestDto.getWriter());// 내용 수정
         write(boardTemp); // 수정된 게시물 저장
     }
 
