@@ -1,18 +1,22 @@
 package com.study.board.dto;
 
-import com.study.board.entity.Board;
 import lombok.*;
+
+import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 
-public class BoardDto {
+public class BoardResponseDto {
     private Integer id;
     private String title;
     private String content;
     private String writer;
-    private String writeTime;
+    private LocalDateTime writeTime;
+
+
+    //dto request 하나 만들기.
 
 
 }
