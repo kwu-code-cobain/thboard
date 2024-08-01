@@ -1,7 +1,6 @@
 package com.study.board.controller;
 
-import com.study.board.dto.BoardRequestDto;
-import com.study.board.dto.BoardResponseDto;
+import com.study.board.dto.BoardDto;
 import com.study.board.entity.Board;
 import com.study.board.service.BoardService;
 import org.springframework.http.HttpStatus;
@@ -23,13 +22,13 @@ public class BoardController {
 
 
     @GetMapping("/list")
-    public ResponseEntity<List<BoardResponseDto>> boardList() {
+    public ResponseEntity<List<BoardDto>> boardList() {
         List<Board> boardList = boardService.boardlist();
         // 빈 DTO 리스트를 생성
-        List<BoardResponseDto> list = new ArrayList<>();
+        List<BoardDto> list = new ArrayList<>();
         // for 문을 사용하여 각 게시물을 DTO로 변환하여 리스트에 추가
         for (Board board : boardList) {
-            BoardResponseDto dto = convertToDto(board);
+            BoardDto dto = convertToDto(board);
             list.add(dto);
         }
 
@@ -42,12 +41,12 @@ public class BoardController {
      */
     @PostMapping("/write")
     @ResponseBody
-    public ResponseEntity<String> boardWrite(BoardRequestDto boardRequestDto) {
-        // DTO를 엔티티로 변환하고 서비스에 전달하여 저장된 결과를 다시 DTO로 변환하여 반환
-        Board board = convertToEntity(boardRequestDto);
-        boardService.write(board); // 전달받은 Board 객체를 저장
-        return ResponseEntity.ok("Success"); // 성공 메시지 반환
+    public ResponseEntity<String> boardWrite(@RequestBody BoardDto boardDto) {
+        Board board = convertToEntity(boardDto);
+        boardService.write(board);
+        return ResponseEntity.ok("Success");
     }
+
 
     /*
      특정 게시물 상세 페이지를 반환
@@ -105,30 +104,32 @@ public class BoardController {
      */
     @PutMapping("/update")
     @ResponseBody
-    public ResponseEntity<String> boardUpdate(@RequestParam("id") Integer id, BoardRequestDto boardRequestDto) {
-        Board boardTemp = boardService.boardViewById(id); // 기존 게시물 조회 - > boardTemp 할당
-        if (boardTemp == null) {       // 수정 완료 ->   boardTemp == null 이면 오류 반환 , else 안돌리게끔
+    public ResponseEntity<?> boardUpdate(@RequestParam(name = "id") Integer id, @RequestBody BoardDto boardDto) {
+        Board board = boardService.boardViewById(id); // 기존 게시물 조회 - > boardTemp 할당
+        if (board == null) {       // 수정 완료 ->   boardTemp == null 이면 오류 반환 , else 안돌리게끔
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("게시판을 찾을 수 없습니다."); //
         }
-        boardService.updateBoardDetails(boardTemp, boardRequestDto); //updateBoardDetails 를 선언 하여 Service 에 옮김.
-        return ResponseEntity.ok("Updated"); // 성공 메시지 반환
+        boardService.updateBoardDetails(board, boardDto); //updateBoardDetails 를 선언 하여 Service 에 옮김.
+        return ResponseEntity.ok(convertToDto(board)); // 성공 메시지 반환
     }
 
-    private BoardResponseDto convertToDto(Board board) {
+    private BoardDto convertToDto(Board board) {
         // 엔티티를 DTO로 변환
-        BoardResponseDto boardResponseDto = new BoardResponseDto();
-        boardResponseDto.setWriter(board.getWriter());
-        boardResponseDto.setTitle(board.getTitle());
-        boardResponseDto.setContent(board.getContent());
-        return boardResponseDto;
+        BoardDto boardDto = new BoardDto();
+        boardDto.setId(board.getId());
+        boardDto.setWriter(board.getWriter());
+        boardDto.setTitle(board.getTitle());
+        boardDto.setContent(board.getContent());
+        return boardDto;
     }
 
-    private Board convertToEntity(BoardRequestDto boardRequestDto) {
+    private Board convertToEntity(BoardDto boardDto) {
         // DTO를 엔티티로 변환
         Board board = new Board();
-        board.setWriter(boardRequestDto.getWriter());
-        board.setTitle(boardRequestDto.getTitle());
-        board.setContent(boardRequestDto.getContent());
+        board.setId(boardDto.getId());
+        board.setWriter(boardDto.getWriter());
+        board.setTitle(boardDto.getTitle());
+        board.setContent(boardDto.getContent());
         return board;
     }
     }

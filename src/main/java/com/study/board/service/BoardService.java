@@ -1,7 +1,6 @@
 package com.study.board.service;
 
-import com.study.board.dto.BoardRequestDto;
-import com.study.board.dto.BoardResponseDto;
+import com.study.board.dto.BoardDto;
 import com.study.board.entity.Board;
 import com.study.board.repository.BoardRepository;
 import org.springframework.stereotype.Service;
@@ -58,10 +57,10 @@ public class BoardService {
         boardRepository.deleteById(id); // ID로 게시물 삭제
     }
 
-    public void updateBoardDetails(Board boardTemp, BoardRequestDto boardRequestDto) {
-        boardTemp.setTitle(boardRequestDto.getTitle()); // 제목 수정
-        boardTemp.setContent(boardRequestDto.getContent());
-        boardTemp.setWriter(boardRequestDto.getWriter());// 내용 수정
+    public void updateBoardDetails(Board boardTemp, BoardDto boardDto) {
+        boardTemp.setTitle(boardDto.getTitle()); // 제목 수정
+        boardTemp.setContent(boardDto.getContent());
+        boardTemp.setWriter(boardDto.getWriter());// 내용 수정
         write(boardTemp); // 수정된 게시물 저장
     }
 
