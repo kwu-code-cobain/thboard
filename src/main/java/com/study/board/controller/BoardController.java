@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,10 +42,10 @@ public class BoardController {
      */
     @PostMapping("/write")
     @ResponseBody
-    public ResponseEntity<String> boardWrite(@RequestBody BoardDto boardDto) {
+    public ResponseEntity<BoardDto> boardWrite(@RequestBody BoardDto boardDto) {
         Board board = convertToEntity(boardDto);
         boardService.write(board);
-        return ResponseEntity.ok("Success");
+        return ResponseEntity.ok(convertToDto(board));
     }
 
 
@@ -116,6 +117,8 @@ public class BoardController {
     private BoardDto convertToDto(Board board) {
         // 엔티티를 DTO로 변환
         BoardDto boardDto = new BoardDto();
+        boardDto.setWriteTime(board.getWriteTime());
+        boardDto.setUpdateTime(board.getUpdateTime());
         boardDto.setId(board.getId());
         boardDto.setWriter(board.getWriter());
         boardDto.setTitle(board.getTitle());

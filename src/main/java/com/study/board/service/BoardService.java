@@ -5,6 +5,7 @@ import com.study.board.entity.Board;
 import com.study.board.repository.BoardRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -20,6 +21,7 @@ public class BoardService {
      글 작성 처리
      */
     public void write(Board board) {
+        board.setWriteTime(LocalDateTime.now());
         boardRepository.save(board); // 새로운 게시물을 저장
     }
 
@@ -57,11 +59,13 @@ public class BoardService {
         boardRepository.deleteById(id); // ID로 게시물 삭제
     }
 
+
     public void updateBoardDetails(Board boardTemp, BoardDto boardDto) {
         boardTemp.setTitle(boardDto.getTitle()); // 제목 수정
         boardTemp.setContent(boardDto.getContent());
         boardTemp.setWriter(boardDto.getWriter());// 내용 수정
-        write(boardTemp); // 수정된 게시물 저장
+        boardTemp.setUpdateTime(LocalDateTime.now());
+        boardRepository.save(boardTemp); // 수정된 게시물 저장
     }
 
 }
