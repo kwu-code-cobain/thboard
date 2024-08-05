@@ -7,12 +7,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class BoardDto {
-    private Integer id;
+public class BoardRequestDto {
+
     private String title;
     private String content;
     private String writer;
 
-    private LocalDateTime writeTime;
-    private LocalDateTime updateTime;
 }
