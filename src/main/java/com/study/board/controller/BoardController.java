@@ -4,6 +4,7 @@ import com.study.board.dto.BoardRequestDto;
 import com.study.board.dto.BoardUpdateResponseDto;
 import com.study.board.dto.BoardWriteResponseDto;
 import com.study.board.entity.Board;
+import com.study.board.service.BoardConvertService;
 import com.study.board.service.BoardService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,9 +17,11 @@ import java.util.List;
 public class BoardController {
 
     private final BoardService boardService;
+    private final BoardConvertService boardConvertService;
 
-    public BoardController(BoardService boardService) {
+    public BoardController(BoardService boardService, BoardConvertService boardConvertService) {
         this.boardService = boardService;   // @autowired 안쓰고 의존성 주입하는 방법 (생성자 주입 )
+        this.boardConvertService = boardConvertService;
     }
 
 
@@ -32,9 +35,9 @@ public class BoardController {
     @PostMapping("/write")
     @ResponseBody
     public ResponseEntity<BoardWriteResponseDto> boardWrite(@RequestBody BoardRequestDto boardRequestDto) {
-        Board board = boardService.convertToEntity(boardRequestDto);
+        Board board = boardConvertService.convertToEntity(boardRequestDto);
         boardService.write(board);
-        return ResponseEntity.ok(boardService.convertToDto(board));
+        return ResponseEntity.ok(boardConvertService.convertToDto(board));
     }
     /*
      특정 게시물 상세 페이지를 반환
@@ -49,7 +52,7 @@ public class BoardController {
         if (board == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("게시판을 찾을 수 없습니다."); // 404 Not Found 반환
         }
-        return ResponseEntity.ok(boardService.convertToDto2(board)); // 게시물 객체를 JSON으로 반환
+        return ResponseEntity.ok(boardConvertService.convertToDto2(board)); // 게시물 객체를 JSON으로 반환
     }
 
     @GetMapping("/viewbywriter")
@@ -61,7 +64,7 @@ public class BoardController {
         if (board == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("게시판을 찾을 수 없습니다."); // 404 Not Found 반환
         }
-        return ResponseEntity.ok(boardService.convertToDto2(board)); // 게시물 객체를 JSON으로 반환
+        return ResponseEntity.ok(boardConvertService.convertToDto2(board)); // 게시물 객체를 JSON으로 반환
     }
 
     @GetMapping("/viewbytitle")
@@ -73,7 +76,7 @@ public class BoardController {
         if (board == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("게시판을 찾을 수 없습니다."); // 404 Not Found 반환
         }
-        return ResponseEntity.ok(boardService.convertToDto2(board)); // 게시물 객체를 JSON으로 반환
+        return ResponseEntity.ok(boardConvertService.convertToDto2(board)); // 게시물 객체를 JSON으로 반환
     }
     /*
      게시물 삭제 처리
@@ -96,7 +99,7 @@ public class BoardController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("게시판을 찾을 수 없습니다."); //
         }
         boardService.updateBoardDetails(board, boardRequestDto); //updateBoardDetails 를 선언 하여 Service 에 옮김.
-        return ResponseEntity.ok(boardService.convertToDto2(board)); // 성공 메시지 반환
+        return ResponseEntity.ok(boardConvertService.convertToDto2(board)); // 성공 메시지 반환
     }
 
 }
