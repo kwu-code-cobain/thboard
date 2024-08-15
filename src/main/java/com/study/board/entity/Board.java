@@ -31,4 +31,7 @@ public class Board {
     @Column(name = "update_time")
     private LocalDateTime updateTime;
 
+    public Board orElseThrow(Object o) {
+        return null;
+    }
 }

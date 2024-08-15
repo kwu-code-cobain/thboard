@@ -1,10 +1,10 @@
 package com.study.board.controller;
 
+import com.study.board.dto.BoardListResponseDto;
 import com.study.board.dto.BoardRequestDto;
 import com.study.board.dto.BoardUpdateResponseDto;
 import com.study.board.dto.BoardWriteResponseDto;
 import com.study.board.entity.Board;
-import com.study.board.service.BoardConvertService;
 import com.study.board.service.BoardService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,66 +17,59 @@ import java.util.List;
 public class BoardController {
 
     private final BoardService boardService;
-    private final BoardConvertService boardConvertService;
 
-    public BoardController(BoardService boardService, BoardConvertService boardConvertService) {
+    public BoardController(BoardService boardService) {
         this.boardService = boardService;   // @autowired 안쓰고 의존성 주입하는 방법 (생성자 주입 )
-        this.boardConvertService = boardConvertService;
     }
 
 
     @GetMapping("/list")
-    public ResponseEntity<List<BoardUpdateResponseDto>> boardList() {
-        return ResponseEntity.ok(boardService.getAllBoardDtos());
+    public ResponseEntity<?> boardList() {
+        try {
+            return ResponseEntity.ok(boardService.getAllBoardDtos());
+        }catch (NullPointerException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
     /*
      새로운 게시물 생성
      */
     @PostMapping("/write")
     @ResponseBody
-    public ResponseEntity<BoardWriteResponseDto> boardWrite(@RequestBody BoardRequestDto boardRequestDto) {
-        Board board = boardConvertService.convertToEntity(boardRequestDto);
-        boardService.write(board);
-        return ResponseEntity.ok(boardConvertService.convertToDto(board));
+    public ResponseEntity<?> boardWrite(@RequestBody BoardRequestDto boardRequestDto) {
+        BoardWriteResponseDto response = boardService.write(boardRequestDto);
+        return ResponseEntity.ok(response);
     }
     /*
      특정 게시물 상세 페이지를 반환
      */
     @GetMapping("/viewbyid")
     public ResponseEntity<?> boardViewById(@RequestParam(name = "id") Integer id) {
-        if (id == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 요청입니다."); // 400 Bad Request 반환
+        try {
+            BoardUpdateResponseDto response = boardService.boardViewById(id);
+            return ResponseEntity.ok(response);
+        } catch (NullPointerException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
-        Board board = boardService.boardViewById(id);
-
-        if (board == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("게시판을 찾을 수 없습니다."); // 404 Not Found 반환
-        }
-        return ResponseEntity.ok(boardConvertService.convertToDto2(board)); // 게시물 객체를 JSON으로 반환
     }
-
     @GetMapping("/viewbywriter")
     public ResponseEntity<?> boardViewByWriter(@RequestParam(name = "writer") String writer) {
-        if (writer == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 요청입니다."); // 400 Bad Request 반환
+        try {
+            BoardUpdateResponseDto response = boardService.boardViewByWriter(writer);
+            return ResponseEntity.ok(response);
+        } catch (NullPointerException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
-        Board board = boardService.boardViewByWriter(writer); //리스트 반환 되게끔
-        if (board == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("게시판을 찾을 수 없습니다."); // 404 Not Found 반환
-        }
-        return ResponseEntity.ok(boardConvertService.convertToDto2(board)); // 게시물 객체를 JSON으로 반환
     }
 
     @GetMapping("/viewbytitle")
     public ResponseEntity<?> boardViewByTitle(@RequestParam(name = "title") String title) {
-        if (title == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 요청입니다."); // 400 Bad Request 반환, httpstatus, body (메세지) 수정
+        try {
+            BoardUpdateResponseDto response = boardService.boardViewByTitle(title);
+            return ResponseEntity.ok(response);
+        } catch (NullPointerException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
-        Board board = boardService.boardViewByTitle(title); //리스트 반환 되게끔
-        if (board == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("게시판을 찾을 수 없습니다."); // 404 Not Found 반환
-        }
-        return ResponseEntity.ok(boardConvertService.convertToDto2(board)); // 게시물 객체를 JSON으로 반환
     }
     /*
      게시물 삭제 처리
@@ -94,12 +87,18 @@ public class BoardController {
     @PutMapping("/update")
     @ResponseBody
     public ResponseEntity<?> boardUpdate(@RequestParam(name = "id") Integer id, @RequestBody BoardRequestDto boardRequestDto) {
-        Board board = boardService.boardViewById(id); // 기존 게시물 조회 - > boardTemp 할당
-        if (board == null) {       // 수정 완료 ->   boardTemp == null 이면 오류 반환 , else 안돌리게끔
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("게시판을 찾을 수 없습니다."); //
+//        Board board = boardService.boardViewById(id); // 기존 게시물 조회 - > boardTemp 할당
+//        if (board == null) {       // 수정 완료 ->   boardTemp == null 이면 오류 반환 , else 안돌리게끔
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("게시판을 찾을 수 없습니다."); //
+//        }
+//        boardService.updateBoardDetails(id, boardRequestDto); //updateBoardDetails 를 선언 하여 Service 에 옮김.
+//        return ResponseEntity.ok(boardConvertService.convertToDto2(board)); // 성공 메시지 반환
+        try {
+            BoardUpdateResponseDto response = boardService.updateBoardDetails(id, boardRequestDto);
+            return ResponseEntity.ok(response);
+        } catch (NullPointerException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
-        boardService.updateBoardDetails(board, boardRequestDto); //updateBoardDetails 를 선언 하여 Service 에 옮김.
-        return ResponseEntity.ok(boardConvertService.convertToDto2(board)); // 성공 메시지 반환
     }
 
 }
